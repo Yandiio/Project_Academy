@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ShareCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.academy.R
 import com.dicoding.academy.data.CourseEntity
@@ -25,7 +26,8 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
-            val courses = DataDummy.generateDummyCourses()
+            val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[BookmarkViewModel::class.java]
+            val courses = viewModel.getBookmarks()
             val adapters = BookmarkAdapter(this)
             adapters.setCourses(courses)
 
