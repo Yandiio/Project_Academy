@@ -11,11 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.academy.R
-import com.dicoding.academy.data.ModuleEntity
+import com.dicoding.academy.data.source.local.entity.ModuleEntity
 import com.dicoding.academy.ui.reader.CourseReaderActivity
 import com.dicoding.academy.ui.reader.CourseReaderCallback
 import com.dicoding.academy.ui.reader.CourseReaderViewModel
-import com.dicoding.academy.utils.DataDummy
 import kotlinx.android.synthetic.main.content_detail_course.*
 import kotlinx.android.synthetic.main.fragment_module_list.progress_bar
 

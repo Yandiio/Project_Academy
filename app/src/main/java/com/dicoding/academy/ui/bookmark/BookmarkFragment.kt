@@ -9,8 +9,9 @@ import androidx.core.app.ShareCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.academy.R
-import com.dicoding.academy.data.CourseEntity
-import com.dicoding.academy.utils.DataDummy
+import com.dicoding.academy.data.source.local.entity.CourseEntity
+import com.dicoding.academy.viewmodel.ViewModelFactory
+import com.dicoding.academy.viewmodel.ViewModelFactory.Companion.getInstance
 import kotlinx.android.synthetic.main.fragment_bookmark.*
 
 class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
@@ -26,7 +27,9 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (activity != null) {
-            val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[BookmarkViewModel::class.java]
+            val factory = ViewModelFactory.getInstance(requireActivity())
+            val viewModel = ViewModelProvider(this, factory)[BookmarkViewModel::class.java]
+
             val courses = viewModel.getBookmarks()
             val adapters = BookmarkAdapter(this)
             adapters.setCourses(courses)

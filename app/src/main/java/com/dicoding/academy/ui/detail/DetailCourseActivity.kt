@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dicoding.academy.R
-import com.dicoding.academy.data.CourseEntity
+import com.dicoding.academy.data.source.local.entity.CourseEntity
 import com.dicoding.academy.ui.reader.CourseReaderActivity
-import com.dicoding.academy.utils.DataDummy
+import com.dicoding.academy.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_detail_courses.*
 import kotlinx.android.synthetic.main.content_detail_course.*
 
@@ -30,7 +30,8 @@ class DetailCourseActivity : AppCompatActivity() {
 
         val adapter = DetailCourseAdapter()
 
-        val viewModel = ViewModelProvider(this, ViewModelProvider.NewInstanceFactory())[DetailCourseViewModel::class.java]
+        val factory = ViewModelFactory.getInstance(this)
+        val viewModel = ViewModelProvider(this, factory)[DetailCourseViewModel::class.java]
 
         val extras = intent.extras
         if (extras != null) {

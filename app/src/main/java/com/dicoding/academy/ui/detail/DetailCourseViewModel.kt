@@ -1,11 +1,12 @@
 package com.dicoding.academy.ui.detail
 
 import androidx.lifecycle.ViewModel
-import com.dicoding.academy.data.CourseEntity
-import com.dicoding.academy.data.ModuleEntity
+import com.dicoding.academy.data.source.AcademyRepository
+import com.dicoding.academy.data.source.local.entity.CourseEntity
+import com.dicoding.academy.data.source.local.entity.ModuleEntity
 import com.dicoding.academy.utils.DataDummy
 
-class DetailCourseViewModel : ViewModel() {
+class DetailCourseViewModel(private val academyRepository: AcademyRepository) : ViewModel() {
 
     private lateinit var courseId : String
 
@@ -13,17 +14,7 @@ class DetailCourseViewModel : ViewModel() {
         this.courseId = courseId
     }
 
-    fun getCourse() : CourseEntity {
-        lateinit var course : CourseEntity
-        val coursesEntities = DataDummy.generateDummyCourses()
-        for (courseEntity in coursesEntities) {
-            if (courseEntity.courseId == courseId) {
-                course = courseEntity
-            }
-        }
+    fun getCourse() : CourseEntity = academyRepository.getCourseWithModules(courseId)
 
-        return course
-    }
-
-    fun getModules() : List<ModuleEntity> = DataDummy.generateDummyModules(courseId)
+    fun getModules() : List<ModuleEntity> = academyRepository.getAllModulesByCourse(courseId)
 }

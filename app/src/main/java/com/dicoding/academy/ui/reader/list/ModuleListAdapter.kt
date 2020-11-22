@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dicoding.academy.R
-import com.dicoding.academy.data.ModuleEntity
+import com.dicoding.academy.data.source.local.entity.ModuleEntity
 
 class ModuleListAdapter internal constructor(private val listener : MyAdapterClickListener) : RecyclerView.Adapter<ModuleListAdapter.ModuleViewHolder>() {
     private val listModules = ArrayList<ModuleEntity>()

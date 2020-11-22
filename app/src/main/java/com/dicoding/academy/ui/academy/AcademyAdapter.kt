@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.dicoding.academy.R
-import com.dicoding.academy.data.CourseEntity
+import com.dicoding.academy.data.source.local.entity.CourseEntity
 import com.dicoding.academy.ui.detail.DetailCourseActivity
 import kotlinx.android.synthetic.main.items_academy.view.*
 

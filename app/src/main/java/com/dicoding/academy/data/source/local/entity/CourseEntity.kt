@@ -1,4 +1,4 @@
-package com.dicoding.academy.data
+package com.dicoding.academy.data.source.local.entity
 
 import android.os.Parcelable
 

@@ -1,6 +1,6 @@
 package com.dicoding.academy.ui.reader
 
-import com.dicoding.academy.data.ContentEntity
+import com.dicoding.academy.data.source.local.entity.ContentEntity
 import com.dicoding.academy.utils.DataDummy
 import org.junit.Test
 
