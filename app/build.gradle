@@ -63,6 +63,7 @@ dependencies {
 
     //testing
     testImplementation "junit:junit:$junitVersion"
+    implementation "androidx.test.espresso:espresso-idling-resource:$idleResourceVersion"
     androidTestImplementation "junit:junit:$junitVersion"
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "androidx.arch.core:core-testing:$archLifecycleVersion"
