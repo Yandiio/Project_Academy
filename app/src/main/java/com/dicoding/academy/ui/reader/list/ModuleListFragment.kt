@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +16,7 @@ import com.dicoding.academy.data.source.local.entity.ModuleEntity
 import com.dicoding.academy.ui.reader.CourseReaderActivity
 import com.dicoding.academy.ui.reader.CourseReaderCallback
 import com.dicoding.academy.ui.reader.CourseReaderViewModel
+import com.dicoding.academy.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.content_detail_course.*
 import kotlinx.android.synthetic.main.fragment_module_list.progress_bar
 
@@ -45,9 +47,15 @@ class ModuleListFragment : Fragment(), MyAdapterClickListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity(), ViewModelProvider.NewInstanceFactory())[CourseReaderViewModel::class.java]
+        val factory = ViewModelFactory.getInstance(requireActivity())
+        viewModel = ViewModelProvider(requireActivity(), factory)[CourseReaderViewModel::class.java]
         adapters = ModuleListAdapter(this)
-        populateRecylerView(viewModel.getModules())
+
+        progress_bar.visibility = View.VISIBLE
+        viewModel.getModules().observe(this, Observer { modules ->
+            progress_bar.visibility = View.GONE
+            populateRecylerView(modules)
+        })
     }
 
     override fun onAttach(context : Context) {

@@ -1,11 +1,17 @@
 package com.dicoding.academy.data.source
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.dicoding.academy.data.source.local.entity.ContentEntity
 import com.dicoding.academy.data.source.local.entity.CourseEntity
 import com.dicoding.academy.data.source.local.entity.ModuleEntity
 import com.dicoding.academy.data.source.remote.RemoteDataSource
+import com.dicoding.academy.data.source.remote.response.ContentResponse
+import com.dicoding.academy.data.source.remote.response.CourseResponse
+import com.dicoding.academy.data.source.remote.response.ModuleResponse
 
-class AcademyRepository private constructor(private val remoteDataSource: RemoteDataSource) : AcademyDataSource {
+class AcademyRepository private constructor(private val remoteDataSource: RemoteDataSource) :
+    AcademyDataSource {
     companion object {
         @Volatile
         private var instance: AcademyRepository? = null
@@ -16,88 +22,132 @@ class AcademyRepository private constructor(private val remoteDataSource: Remote
             }
     }
 
-    override fun getAllCourses(): ArrayList<CourseEntity> {
-        val courseResponses = remoteDataSource.getAllCourses()
-        val courseList = ArrayList<CourseEntity>()
-        for (response in courseResponses) {
-            val course = CourseEntity(response.id,
-                    response.title,
-                    response.description,
-                    response.date,
-            false,
-                    response.imagePath)
-            courseList.add(course)
-        }
-
-        return courseList
-    }
-
-    override fun getBookmarkedCourses(): ArrayList<CourseEntity> {
-        val courseResponses = remoteDataSource.getAllCourses()
-        val courseList = ArrayList<CourseEntity>()
-        for (response in courseResponses) {
-            val course = CourseEntity(response.id,
-                    response.title,
-                    response.description,
-                    response.date,
-                    false,
-                    response.imagePath)
-
-            courseList.add(course)
-        }
-
-        return courseList
-    }
-
-    override fun getCourseWithModules(courseId: String): CourseEntity {
-        val courseResponses = remoteDataSource.getAllCourses()
-        lateinit var course: CourseEntity
-        for (response in courseResponses) {
-            if (response.id == courseId) {
-                course = CourseEntity(response.id,
+    override fun getAllCourses(): LiveData<List<CourseEntity>> {
+        val courseResult = MutableLiveData<List<CourseEntity>>()
+        remoteDataSource.getAllCourses(object : RemoteDataSource.LoadCoursesCallback {
+            override fun onAllCoursesReceived(loadCourses: List<CourseResponse>) {
+                val courseList = ArrayList<CourseEntity>()
+                for (response in loadCourses) {
+                    val course = CourseEntity(
+                        response.id,
                         response.title,
                         response.description,
                         response.date,
                         false,
-                        response.imagePath)
+                        response.imagePath
+                    )
+                    courseList.add(course)
+                }
+                courseResult.postValue(courseList)
             }
-        }
+        })
 
-        return course
+        return courseResult
     }
 
-    override fun getAllModulesByCourse(courseId: String): ArrayList<ModuleEntity> {
-        val moduleResponses = remoteDataSource.getModules(courseId)
-        val moduleList = ArrayList<ModuleEntity>()
-        for (response in moduleResponses) {
-            val course = ModuleEntity( response.moduleId,
-                response.courseId,
-                response.title,
-                response.position,
-       false)
+    override fun getBookmarkedCourses(): LiveData<List<CourseEntity>> {
+        val courseResults = MutableLiveData<List<CourseEntity>>()
+        remoteDataSource.getAllCourses(object : RemoteDataSource.LoadCoursesCallback {
+            override fun onAllCoursesReceived(loadCourses: List<CourseResponse>) {
+                val courseList = ArrayList<CourseEntity>()
+                for (response in loadCourses) {
+                    val course = CourseEntity(
+                        response.id,
+                        response.title,
+                        response.description,
+                        response.date,
+                        false,
+                        response.imagePath
+                    )
+                    courseList.add(course)
+                }
+                courseResults.postValue(courseList)
+            }
 
-            moduleList.add(course)
-        }
+        })
 
-        return moduleList
+
+        return courseResults
     }
 
-    override fun getContent(courseId: String, moduleId: String): ModuleEntity {
-        val moduleResponses = remoteDataSource.getModules(courseId)
-        lateinit var module: ModuleEntity
-        for (response in moduleResponses) {
-            if (response.moduleId == moduleId) {
-                module = ModuleEntity(response.moduleId,
-                    response.courseId,
-                    response.title,
-                    response.position,
-                    false)
-                module.contentEntity = ContentEntity(remoteDataSource.getContent(moduleId).content)
-                break
-            }
-        }
+    override fun getCourseWithModules(courseId: String): LiveData<CourseEntity> {
+        val courseResults = MutableLiveData<CourseEntity>()
 
-        return module
+        remoteDataSource.getAllCourses(object : RemoteDataSource.LoadCoursesCallback {
+            override fun onAllCoursesReceived(loadCourses: List<CourseResponse>) {
+                lateinit var course: CourseEntity
+                for (response in loadCourses) {
+                    if (response.id == courseId) {
+                        course = CourseEntity(
+                            response.id,
+                            response.title,
+                            response.description,
+                            response.date,
+                            false,
+                            response.imagePath
+                        )
+                    }
+                }
+                courseResults.postValue(course)
+            }
+        })
+
+        return courseResults
+    }
+
+    override fun getAllModulesByCourse(courseId: String): LiveData<List<ModuleEntity>> {
+        val moduleResult = MutableLiveData<List<ModuleEntity>>()
+
+        remoteDataSource.getModules(courseId, object : RemoteDataSource.LoadModulesCallback {
+            override fun onAllModulesReceived(loadModule: List<ModuleResponse>) {
+                val moduleList = ArrayList<ModuleEntity>()
+                for (response in loadModule) {
+                    val course = ModuleEntity(
+                        response.moduleId,
+                        response.courseId,
+                        response.title,
+                        response.position,
+                        false
+                    )
+
+                    moduleList.add(course)
+                }
+
+                moduleResult.postValue(moduleList)
+            }
+        })
+
+        return moduleResult
+    }
+
+    override fun getContent(courseId: String, moduleId: String): LiveData<ModuleEntity> {
+        val moduleResults = MutableLiveData<ModuleEntity>()
+
+        remoteDataSource.getModules(courseId, object : RemoteDataSource.LoadModulesCallback {
+            override fun onAllModulesReceived(loadModule: List<ModuleResponse>) {
+                lateinit var module: ModuleEntity
+                for (response in loadModule) {
+                    if (response.moduleId == moduleId) {
+                        module = ModuleEntity(
+                            response.moduleId,
+                            response.courseId,
+                            response.title,
+                            response.position,
+                            false
+                        )
+                        remoteDataSource.getContent(moduleId, object : RemoteDataSource.LoadContentCallback {
+                            override fun onContentReceived(loadContent: ContentResponse) {
+                                module.contentEntity = ContentEntity(loadContent.content)
+                                moduleResults.postValue(module)
+                            }
+                        })
+                        break
+                    }
+                }
+            }
+        })
+
+        return moduleResults
     }
 
 

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.dicoding.academy.R
 import com.dicoding.academy.data.source.local.entity.ModuleEntity
@@ -36,8 +37,14 @@ class ModuleContentFragment : Fragment() {
         if (activity != null) {
             val factory = ViewModelFactory.getInstance(requireActivity())
             val viewModel = ViewModelProvider(requireActivity(), factory)[CourseReaderViewModel::class.java]
-            val module = viewModel.getSelectedModule()
-            populateWebView(module)
+
+            progress_bar.visibility = View.VISIBLE
+            viewModel.getSelectedModule().observe(this, Observer { module ->
+                if (module != null) {
+                    progress_bar.visibility = View.GONE
+                    populateWebView(module)
+                }
+            })
         }
     }
 

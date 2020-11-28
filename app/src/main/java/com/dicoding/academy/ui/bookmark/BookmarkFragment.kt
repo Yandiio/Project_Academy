@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ShareCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.academy.R
@@ -32,7 +33,12 @@ class BookmarkFragment : Fragment(), BookmarkFragmentCallback {
 
             val courses = viewModel.getBookmarks()
             val adapters = BookmarkAdapter(this)
-            adapters.setCourses(courses)
+            progress_bar.visibility = View.VISIBLE
+            viewModel.getBookmarks().observe(this, Observer{ courses ->
+                progress_bar.visibility = View.GONE
+                adapters.setCourses(courses)
+                adapters.notifyDataSetChanged()
+            })
 
 
         with(rv_bookmark) {
